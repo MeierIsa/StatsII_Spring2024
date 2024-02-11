@@ -92,72 +92,16 @@ $$p(D \leq x) \frac{\sqrt {2\pi}}{x} \sum _{k=1}^{\infty }e^{-(2k-1)^{2}\pi ^{2}
 	
 \noindent As a hint, you can create the empirical distribution and theoretical CDF using this code:
 
-
-
 \begin{lstlisting}[language=R]
 	# create empirical distribution of observed data
 	ECDF <- ecdf(data)
 	empiricalCDF <- ECDF(data)
 	# generate test statistic
 	D <- max(abs(empiricalCDF - pnorm(data))) \end{lstlisting}
-\textbf{Code for problem 1}
-\begin{lstlisting}[language=R]
-	# Kolmogorov-Smirnov test function
-	set.seed(123)
-	kol_smir_test <- function(sample_size = 1000, location = 0, scale = 1) {  
-		data <- rcauchy(sample_size, location = location, scale = scale)  
-		ECDF <- ecdf(data)  
-		empiricalCDF <- ECDF(data)  
-		D <- max(abs(empiricalCDF - pnorm(data)))  
-		print(paste("Kolmogorov-Smirnov test statistic (D) : ", D))  
-		return(D)
-		}
-	# Calling the function
-	kol_smir_result <- kol_smir_test() 
-	print(kol_smir_result)
-	# Calculating the p-value 
-	D <- 0.13472806160635
-	pvalue_3 <- 1- pnorm(sqrt(n) * D)
-	pvalue_3 <- 1 - pnorm(sqrt(1000) * 0.13472806160635)
-	print(pvalue_3)
-	# doing the ks.test to compare results
-	ks_result3 <- ks.test(data, "pnorm")
-	print(ks_result3)
-\end{lstlisting}	
-\textbf{Output: The p-value from my function is pvalue-3 = 1.019963e-05 and the p-value from the ks.test is ks-result3 = 2.22e-16. I know mine is still higher than the ks.test but is the closest to zero I got after changing the function a lot.
-Actual output from ks.test: Asymptotic one-sample Kolmogorov-Smirnov testdata:  dataD = 0.13573, p-value = 2.22e-16 
-alternative hypothesis: two-sided}
 \vspace{3in}
 
 \section*{Question 2}
 \noindent Estimate an OLS regression in \texttt{R} that uses the Newton-Raphson algorithm (specifically \texttt{BFGS}, which is a quasi-Newton method), and show that you get the equivalent results to using \texttt{lm}. Use the code below to create your data.
 \vspace{.5cm}
 \lstinputlisting[language=R, firstline=51,lastline=53]{PS1.R} 
-\textbf{Code}
-\begin{lstlisting}[language=R]
-# Generating the data
-set.seed (123)
-data <- data.frame(x = runif(200, 1, 10))
-data$y <- 0 + 2.75*data$x + rnorm(200, 0, 1.5)
-# defining the function
-OLS_obj <- function(beta, x, y) {  
-	y_esp <- beta[1] + beta[2]*x  
-	error <- y - y_esp  
-	return(sum(error^2))
-}
-# Beta values at first
-beta_um <- c(0, 0)
-# Optimising with BFGS
-bfg_otimo <- optim(par = beta_um, fn = OLS_obj, x = data$x, y = data$y, method = "BFGS")
-# getting the estimated coefficients 
-bfg_estcoef <- bfg_otimo$par
-# Comparing the coefficients from BFGS with the lm
-lm_comp <- lm(y ~ x, data = data)
-coef_lm <- coef(lm_comp)
-#
-print(bfg_estcoef)
-print(coef_lm)
-\end{lstlisting}	
-\textbf{Output: bfg-estcoef =  0.1391778 ,  2.7267000 
- and coef-lm = (Intercept) = 0.1391874 , x =  2.7266985} 
 \end{document}
