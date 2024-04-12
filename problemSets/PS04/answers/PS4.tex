@@ -1,0 +1,109 @@
+\documentclass[12pt,letterpaper]{article}
+\usepackage{graphicx,textcomp}
+\usepackage{natbib}
+\usepackage{setspace}
+\usepackage{fullpage}
+\usepackage{color}
+\usepackage[reqno]{amsmath}
+\usepackage{amsthm}
+\usepackage{fancyvrb}
+\usepackage{amssymb,enumerate}
+\usepackage[all]{xy}
+\usepackage{endnotes}
+\usepackage{lscape}
+\newtheorem{com}{Comment}
+\usepackage{float}
+\usepackage{hyperref}
+\newtheorem{lem} {Lemma}
+\newtheorem{prop}{Proposition}
+\newtheorem{thm}{Theorem}
+\newtheorem{defn}{Definition}
+\newtheorem{cor}{Corollary}
+\newtheorem{obs}{Observation}
+\usepackage[compact]{titlesec}
+\usepackage{dcolumn}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usepackage{multirow}
+\usepackage{xcolor}
+\newcolumntype{.}{D{.}{.}{-1}}
+\newcolumntype{d}[1]{D{.}{.}{#1}}
+\definecolor{light-gray}{gray}{0.65}
+\usepackage{url}
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+	backgroundcolor=\color{backcolour},   
+	commentstyle=\color{codegreen},
+	keywordstyle=\color{magenta},
+	numberstyle=\tiny\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle=\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2
+}
+\lstset{style=mystyle}
+\newcommand{\Sref}[1]{Section~\ref{#1}}
+\newtheorem{hyp}{Hypothesis}
+
+\title{Problem Set 4}
+\date{Due: April 12, 2024}
+\author{Applied Stats II}
+
+
+\begin{document}
+	\maketitle
+	\section*{Instructions}
+	\begin{itemize}
+	\item Please show your work! You may lose points by simply writing in the answer. If the problem requires you to execute commands in \texttt{R}, please include the code you used to get your answers. Please also include the \texttt{.R} file that contains your code. If you are not sure if work needs to be shown for a particular problem, please ask.
+	\item Your homework should be submitted electronically on GitHub in \texttt{.pdf} form.
+	\item This problem set is due before 23:59 on Friday April 12, 2024. No late assignments will be accepted.
+
+	\end{itemize}
+
+	\vspace{.25cm}
+\section*{Question 1}
+\vspace{.25cm}
+\noindent We're interested in modeling the historical causes of child mortality. We have data from 26855 children born in Skellefteå, Sweden from 1850 to 1884. Using the "child" dataset in the \texttt{eha} library, fit a Cox Proportional Hazard model using mother's age and infant's gender as covariates. Present and interpret the output.
+\begin{lstlisting}[language=R]
+data("child", package = "eha")
+# turning "sex" into factor
+child$sex <- as.factor(child$sex)
+#fotting the model
+cph_model <- coxph(Surv(exit, event) ~ m.age + sex, data = child)
+#
+summary(cph_model)
+\end{lstlisting}	
+\begin{lstlisting}
+OUTPUT
+Call:
+coxph(formula = Surv(exit, event) ~ m.age + sex, data = child) 
+n= 26574, number of events= 5616                
+             coef   exp(coef)  se(coef)    z   Pr(>|z|)    
+m.age      0.007617  1.007646  0.002128  3.580 0.000344 ***
+sexfemale -0.082215  0.921074  0.026743 -3.074 0.002110 ** 
+Signif. codes:  0 *** 0.001 ** 0.01 * 0.05 . 0.1   1          
+            exp(coef) exp(-coef) lower .95 upper .95
+m.age        1.0076     0.9924     1.003    1.0119
+sexfemale    0.9211     1.0857     0.874    0.9706
+Concordance= 0.519  (se = 0.004 )
+Likelihood ratio test= 22.52  on 2 df,   p=1e-05
+Wald test            = 22.52  on 2 df,   p=1e-05
+Score (logrank) test = 22.53  on 2 df,   p=1e-05
+\end{lstlisting}
+\textbf{The estimated coefficient for mother's age indicates the log hazard ratio associated with a one unit increase in mother's age. The exp(coef) is the hazard ratio associated with one year increase in mothers age, it suggests that a one unit increase in mothers age is associated with a 0.76 per cent increase in the risk of the event( death). The p value suggests that the coefficient for m.age is significant. The estimated coefficient for female sex indicates that being female is associated with a decrease in the log hazard ratio compared to being male that is the reference category. The exp(coef) of the hazard ratio suggests that female children have a 7.89 per cent lower risk of the event compared to male children. The p value for sexfemale suggests that this coefficient is also significant.}
+\end{document}
